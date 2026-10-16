@@ -14,6 +14,16 @@
 
 ![黑色主题任务图鉴搜索](docs/demos/black-mission-index.gif)
 
+## 线上增强版卫星演示 / Online enhanced satellite demos
+
+以下两张 GIF 录制自[线上增强模块](https://ichxjz.com/KK-Tiong_Pavelio)的真实浏览器操作，包含 `KK-Tiong_Pavelio` 录制署名：点选一颗卫星生成一条运动轨迹，继续点选可同时查看多条轨迹。位置依据公开轨道要素推算，非实时遥测。
+
+**这些增强功能不包含在本仓库的独立核心中。** 本仓库仅收录其演示 GIF，没有加入线上前端、GP 快照或私人后台。前三张黑色主题 GIF 仍对应本仓库实际提供的功能。
+
+| 点选卫星与轨迹 / Select a satellite | 多颗卫星运动轨迹 / Multiple orbits |
+| :---: | :---: |
+| ![KK-Tiong_Pavelio 线上增强版：点击卫星出现运动轨迹](docs/demos/enhanced-satellite-orbit.gif) | ![KK-Tiong_Pavelio 线上增强版：连续点选多颗卫星及运动轨迹](docs/demos/enhanced-multiple-orbits.gif) |
+
 ## 0.2.0 更新 / Changes
 
 - 首次有效绘制与轨道 Worker 就绪后即可进入，高清贴图后台加载；加载失败时保留基础色彩，并明确显示失败数，不将失败计为完成。
@@ -43,7 +53,7 @@ npm run dev
 
 ## 项目范围与许可 / Scope and licensing
 
-这是可独立运行的原创核心版。[线上 STARS AND SEA 页面](https://ichxjz.com/KK-Tiong_Pavelio)使用尚未确认再分发许可的第三方压缩前端，因此线上页面的 206 条档案、持续更新的 GP 轨道快照、任务照片、音乐和完整界面不在本仓库内。截图与 GIF 仅展示本仓库包含的功能。
+这是可独立运行的原创核心版。[线上 STARS AND SEA 页面](https://ichxjz.com/KK-Tiong_Pavelio)使用尚未确认再分发许可的第三方压缩前端，因此线上页面的 206 条档案、持续更新的 GP 轨道快照、任务照片、音乐和完整界面不在本仓库内。截图与前三张 GIF 展示本仓库包含的功能；另两张明确标注为线上增强模块的演示。
 
 `src/` 原创代码采用 MIT 许可。`public/solar/textures/` 的 9 张天体贴图属于 Solar System Scope，依据 CC BY 4.0 使用；再分发时须保留署名和许可链接。其他依赖保留各自许可。GIF 和截图也包含这些天体贴图，转用时同样须保留署名。资料与贴图来源见 [THIRD_PARTY.md](THIRD_PARTY.md)。
 
