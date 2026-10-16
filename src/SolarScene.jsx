@@ -44,9 +44,9 @@ export default function SolarScene({year,view,selected,missionGroup,kind,body,hi
   useEffect(()=>{
     const host=hostRef.current;if(!host)return undefined;
     let renderer;
-    try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});}catch{host.textContent='此浏览器无法启动 WebGL 场景。请启用硬件加速后刷新。';return undefined;}
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.6));renderer.setSize(host.clientWidth,host.clientHeight);renderer.setClearColor(0x03060b);renderer.outputColorSpace=THREE.SRGBColorSpace;host.appendChild(renderer.domElement);
-    const scene=new THREE.Scene();scene.background=new THREE.Color(0x03060b);
+    try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});}catch{onProgress?.({loaded:0,total:9,sceneReady:false,error:'此浏览器无法启动 WebGL 场景。请启用硬件加速后重试。'});return undefined;}
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.6));renderer.setSize(host.clientWidth,host.clientHeight);renderer.setClearColor(0x050505);renderer.outputColorSpace=THREE.SRGBColorSpace;host.appendChild(renderer.domElement);
+    const scene=new THREE.Scene();scene.background=new THREE.Color(0x050505);
     const camera=new THREE.PerspectiveCamera(46,host.clientWidth/host.clientHeight,.1,800);camera.position.set(0,72,95);
     const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.075;controls.rotateSpeed=.62;controls.zoomSpeed=.68;controls.panSpeed=.5;controls.minDistance=8;controls.maxDistance=360;controls.zoomToCursor=true;
     const ambient=new THREE.AmbientLight(0x8995b0,1.25);scene.add(ambient);
@@ -61,20 +61,21 @@ export default function SolarScene({year,view,selected,missionGroup,kind,body,hi
     const minorNodes=minorBodies.map(item=>{const orbit=orbitLine(visualRadius(item.a),item.e,item.i,0x68849c,.2);orbitGroup.add(orbit);const marker=new THREE.Mesh(new THREE.SphereGeometry(item.name==='CERES'?0.42:0.26,10,8),new THREE.MeshBasicMaterial({color:0xb7a88e}));scene.add(marker);return {...item,orbit,marker};});
     const planetNodes=new Map(),planetMeshes=[];
     const loadingManager=new THREE.LoadingManager();
-    const reportProgress=(loaded,total,workerReady)=>onProgress?.({loaded,total,workerReady});
-    let textureLoaded=0,textureTotal=9,workerReady=false;
-    loadingManager.onProgress=(_url,loaded,total)=>{textureLoaded=loaded;textureTotal=total;reportProgress(textureLoaded,textureTotal,workerReady)};
-    loadingManager.onError=()=>reportProgress(textureLoaded,textureTotal,workerReady);
+    let textureLoaded=0,textureTotal=9,workerReady=false,rendered=false,alive=true;
+    const failedTextures=new Set();
+    const reportProgress=()=>{if(alive)onProgress?.({loaded:textureLoaded,total:textureTotal,failed:failedTextures.size,workerReady,sceneReady:workerReady&&rendered});};
+    loadingManager.onProgress=(_url,settled,total)=>{textureLoaded=settled-failedTextures.size;textureTotal=total;reportProgress();};
+    loadingManager.onError=url=>{failedTextures.add(url);};
     const textureLoader=new THREE.TextureLoader(loadingManager);
-    const sunMap=textureLoader.load(`${import.meta.env.BASE_URL}solar/textures/sun.jpg`);sunMap.colorSpace=THREE.SRGBColorSpace;
-    const sun=new THREE.Mesh(new THREE.SphereGeometry(3.35,48,32),new THREE.MeshBasicMaterial({map:sunMap,color:0xffe5b6}));sun.userData={type:'sun'};scene.add(sun);
+    const sunMap=textureLoader.load(`${import.meta.env.BASE_URL}solar/textures/sun.jpg`,map=>{if(!alive){map.dispose();return;}sun.material.map=map;sun.material.needsUpdate=true;});sunMap.colorSpace=THREE.SRGBColorSpace;
+    const sun=new THREE.Mesh(new THREE.SphereGeometry(3.35,48,32),new THREE.MeshBasicMaterial({color:0xffe5b6}));sun.userData={type:'sun'};scene.add(sun);
     const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTexture(),color:0xffd49b,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));glow.scale.set(29,29,1);scene.add(glow);
     for(const planet of planets){
       const radius=radii[planet.id]||1;
       const group=new THREE.Group();scene.add(group);
       const mapName=textureNames[planet.id];
       const material=new THREE.MeshStandardMaterial({color:planet.color,roughness:.95,metalness:0});
-      if(mapName){const map=textureLoader.load(`${import.meta.env.BASE_URL}solar/textures/${mapName}.jpg`);map.colorSpace=THREE.SRGBColorSpace;material.map=map;material.color.set(0xffffff);}
+      if(mapName){const map=textureLoader.load(`${import.meta.env.BASE_URL}solar/textures/${mapName}.jpg`,texture=>{if(!alive){texture.dispose();return;}material.map=texture;material.color.set(0xffffff);material.needsUpdate=true;});map.colorSpace=THREE.SRGBColorSpace;}
       const sphere=new THREE.Mesh(new THREE.SphereGeometry(radius,32,24),material);sphere.userData={type:'planet',id:planet.id};group.add(sphere);
       const hitTarget=new THREE.Mesh(new THREE.SphereGeometry(Math.max(radius*1.55,1.9),12,8),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));hitTarget.userData={type:'planet',id:planet.id};group.add(hitTarget);planetMeshes.push(hitTarget);
       if(planet.id==='saturn'){const ring=new THREE.Mesh(new THREE.RingGeometry(radius*1.36,radius*2.15,96),new THREE.MeshBasicMaterial({color:0xcbb991,side:THREE.DoubleSide,transparent:true,opacity:.68,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.rotation.z=.22;group.add(ring);}
@@ -110,7 +111,8 @@ export default function SolarScene({year,view,selected,missionGroup,kind,body,hi
       }
       missionMesh.instanceMatrix.needsUpdate=true;missionMesh.computeBoundingSphere();
     };
-    worker.onmessage=event=>{if(event.data.requestId<requestId)return;planetPositions.set(new Float32Array(event.data.planetPositions));missionPositions.set(new Float32Array(event.data.missionPositions));planets.forEach((planet,index)=>planetNodes.get(planet.id)?.group.position.fromArray(planetPositions,index*3));workerReady=true;reportProgress(textureLoaded,textureTotal,workerReady);refresh();if(selectedRef.current)focus(selectedRef.current);};
+    worker.onmessage=event=>{if(event.data.requestId<requestId)return;planetPositions.set(new Float32Array(event.data.planetPositions));missionPositions.set(new Float32Array(event.data.missionPositions));planets.forEach((planet,index)=>planetNodes.get(planet.id)?.group.position.fromArray(planetPositions,index*3));workerReady=true;reportProgress();refresh();if(selectedRef.current)focus(selectedRef.current);};
+    worker.onerror=()=>{if(alive)onProgress?.({loaded:textureLoaded,total:textureTotal,failed:failedTextures.size,error:'轨道计算未能启动，请重试。'});};
     const compute=()=>worker.postMessage({type:'compute',year:config.year,view:config.view,requestId:++requestId});compute();
     const liveTimer=window.setInterval(()=>{if(config.view==='live'&&!document.hidden)compute()},60000);
     const project=(position,label,offset=0)=>{const p=position.clone().project(camera);const inView=p.z>-1&&p.z<1&&Math.abs(p.x)<1.05&&Math.abs(p.y)<1.05;label.style.display=inView?'block':'none';if(inView)label.style.transform=`translate(${Math.round((p.x*.5+.5)*host.clientWidth+offset)}px,${Math.round((-p.y*.5+.5)*host.clientHeight)}px)`;};
@@ -123,9 +125,11 @@ export default function SolarScene({year,view,selected,missionGroup,kind,body,hi
     const setView=viewName=>{const distance=camera.position.distanceTo(controls.target);const position=viewName==='side'?new THREE.Vector3(0,distance*.1,distance*.99):viewName==='live'?new THREE.Vector3(0,distance*.82,distance*.57):new THREE.Vector3(0,distance*.6,distance*.8);position.setLength(distance);tween={target:controls.target.clone(),camera:controls.target.clone().add(position)};};
     const pointerMove=event=>{const rect=renderer.domElement.getBoundingClientRect();mouse.x=(event.clientX-rect.left)/rect.width*2-1;mouse.y=-(event.clientY-rect.top)/rect.height*2+1;mouseX=mouse.x;mouseY=mouse.y;reticle.style.left=`${event.clientX-rect.left}px`;reticle.style.top=`${event.clientY-rect.top}px`;reticle.style.opacity='1';raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects([...planetMeshes,missionMesh],false);const first=hits.find(hit=>hit.object.visible&&(!hit.object.isInstancedMesh||filterMission(missions[hit.instanceId])));hover=first?first.object===missionMesh?{type:'mission',id:missions[first.instanceId].id}:{type:'planet',id:first.object.userData.id}:null;renderer.domElement.style.cursor=hover?'pointer':'grab';reticle.classList.toggle('is-target',Boolean(hover));};
     const pointerLeave=()=>{hover=null;reticle.style.opacity='0';};
-    let down=null;const pointerDown=event=>{down={x:event.clientX,y:event.clientY}};
-    const pointerUp=event=>{if(down&&Math.hypot(event.clientX-down.x,event.clientY-down.y)<5&&hover){onSelectRef.current?.(hover);focus(hover);}down=null;};
-    renderer.domElement.addEventListener('pointermove',pointerMove);renderer.domElement.addEventListener('pointerleave',pointerLeave);renderer.domElement.addEventListener('pointerdown',pointerDown);renderer.domElement.addEventListener('pointerup',pointerUp);
+    const activePointers=new Set();let down=null;
+    const pointerDown=event=>{activePointers.add(event.pointerId);if(activePointers.size>1){down=null;return;}down={x:event.clientX,y:event.clientY,id:event.pointerId,button:event.button};};
+    const pointerUp=event=>{activePointers.delete(event.pointerId);const tap=down;down=null;if(!tap||tap.id!==event.pointerId||tap.button!==0||Math.hypot(event.clientX-tap.x,event.clientY-tap.y)>=5)return;pointerMove(event);if(hover){onSelectRef.current?.(hover);focus(hover);}};
+    const pointerCancel=event=>{activePointers.delete(event.pointerId);down=null;};
+    renderer.domElement.addEventListener('pointermove',pointerMove);renderer.domElement.addEventListener('pointerleave',pointerLeave);renderer.domElement.addEventListener('pointerdown',pointerDown);renderer.domElement.addEventListener('pointerup',pointerUp);renderer.domElement.addEventListener('pointercancel',pointerCancel);
     const resize=new ResizeObserver(()=>{if(!host.clientWidth||!host.clientHeight)return;camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight);});resize.observe(host);
     const animate=()=>{if(!visible)return;frame=requestAnimationFrame(animate);controls.autoRotate=Boolean(config.autoOrbit);controls.autoRotateSpeed=.25;controls.update();
       if(tween){camera.position.lerp(tween.camera,.085);controls.target.lerp(tween.target,.085);if(camera.position.distanceTo(tween.camera)<.08&&controls.target.distanceTo(tween.target)<.08)tween=null;}
@@ -139,11 +143,11 @@ export default function SolarScene({year,view,selected,missionGroup,kind,body,hi
       for(const {id,node,moon,label} of moonLabels){if(moon.marker.visible&&selectedRef.current?.type==='planet'&&selectedRef.current.id===id){const world=node.group.localToWorld(moon.marker.position.clone());placeLabel(world,label,6,90,16)}else label.style.display='none';}
       for(const {node,label} of minorLabels){if(node.marker.visible){placeLabel(node.marker.position,label,5,110,16)}else label.style.display='none';}
       for(const {label,index} of missionLabels){if(filterMission(missions[index])){positionBuffer.fromArray(missionPositions,index*3);placeLabel(positionBuffer,label,5,145,19);}else label.style.display='none';}
-      renderer.render(scene,camera);
+      renderer.render(scene,camera);if(workerReady&&!rendered){rendered=true;reportProgress();}
     };animate();
     const visibility=()=>{visible=!document.hidden;if(visible)animate();else cancelAnimationFrame(frame)};document.addEventListener('visibilitychange',visibility);
     const api={focus,reset,zoom,setView,setData(next){const previousYear=config.year,previousView=config.view,previousLang=config.lang;Object.assign(config,next);if(previousYear!==config.year||previousView!==config.view)compute();if(previousLang!==config.lang)planets.forEach(planet=>{labels.get(planet.id).innerHTML=config.lang==='zh'?`${planet.en}<small>${planet.zh}</small>`:`${planet.zh}<small>${planet.en}</small>`});refresh();}};apiRef.current=api;onReady?.(api);
-    return()=>{visible=false;cancelAnimationFrame(frame);window.clearInterval(liveTimer);resize.disconnect();document.removeEventListener('visibilitychange',visibility);worker.terminate();controls.dispose();renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointerleave',pointerLeave);renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);const release=material=>{material.map?.dispose();material.dispose()};scene.traverse(object=>{object.geometry?.dispose();if(Array.isArray(object.material))object.material.forEach(release);else if(object.material)release(object.material)});renderer.dispose();host.replaceChildren();apiRef.current=null;};
+    return()=>{alive=false;visible=false;cancelAnimationFrame(frame);window.clearInterval(liveTimer);resize.disconnect();document.removeEventListener('visibilitychange',visibility);worker.terminate();controls.dispose();renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointerleave',pointerLeave);renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointercancel',pointerCancel);const release=material=>{material.map?.dispose();material.dispose()};scene.traverse(object=>{object.geometry?.dispose();if(Array.isArray(object.material))object.material.forEach(release);else if(object.material)release(object.material)});renderer.dispose();host.replaceChildren();apiRef.current=null;};
   },[]);
 
   useEffect(()=>{apiRef.current?.setData({year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang});},[year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang]);
