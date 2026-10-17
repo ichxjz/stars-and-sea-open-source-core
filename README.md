@@ -1,8 +1,8 @@
 # STARS AND SEA · Solar Atlas Core
 
-由 [KK-Tiong_Pavelio](https://ichxjz.com) 制作的独立太阳系图谱核心。使用 React、Three.js 和 Web Worker 呈现可交互的天体、任务标记与时间轴，可在本地直接运行。[点击可在线预览](https://ichxjz.com/KK-Tiong_Pavelio)。
+由 [KK-Tiong_Pavelio](https://ichxjz.com) 制作的独立太阳系图谱核心。使用 React、Three.js 和 Web Worker 呈现可交互的天体、任务标记与时间轴，可在本地直接运行。[线上 STARS AND SEA 页面在线预览](https://ichxjz.com/KK-Tiong_Pavelio)
 
-这个仓库收录 9 个天体、18 条选录任务档案、任务搜索、镜头与图层控制，以及桌面和手机布局。轨道位置、标记大小和部分小天体路径用于视觉说明，不适合导航或科研计算。
+仓库收录 9 个天体、18 条选录任务档案、任务搜索、镜头与图层控制，以及桌面和手机布局。轨道位置、标记大小和部分小天体路径用于视觉说明，不适合导航或科研计算。
 
 ## 黑色主题动图 / Black theme demos
 
