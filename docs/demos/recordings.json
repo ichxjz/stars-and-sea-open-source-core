@@ -1,6 +1,5 @@
 {
   "release": "ichxjz-portfolio-20261017182802",
-  "base": "https://ichxjz.com/KK-Tiong_Pavelio",
   "watermark": "KK-Tiong_Pavelio",
   "source": "Actual latest website interface. Online enhancements are not shipped in this independent core.",
   "clips": [
@@ -176,5 +175,8 @@
     }
   ],
   "errors": [],
-  "passed": true
+  "passed": true,
+  "captureOrigin": "local preview of final website build",
+  "publicPreview": "https://ichxjz.com/KK-Tiong_Pavelio",
+  "orbitData": "Approved orbit snapshot bundled with the build; counts on the deployed site can change with its five-hour live refresh."
 }
