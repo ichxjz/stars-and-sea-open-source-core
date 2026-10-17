@@ -37,7 +37,7 @@ function glowTexture(){
   ctx.fillStyle=gradient;ctx.fillRect(0,0,128,128);return new THREE.CanvasTexture(canvas);
 }
 
-export default function SolarScene({year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang,onSelect,onReady,onProgress}){
+export default function SolarScene({paused,year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang,onSelect,onReady,onProgress}){
   const hostRef=useRef(null),apiRef=useRef(null),selectedRef=useRef(selected),onSelectRef=useRef(onSelect);
   selectedRef.current=selected;onSelectRef.current=onSelect;
 
@@ -98,7 +98,7 @@ export default function SolarScene({year,view,selected,missionGroup,kind,body,hi
     const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();let hover=null,mouseX=0,mouseY=0,visible=true,frame=0,requestId=0;
     const worker=new Worker(new URL('./orbits.worker.js',import.meta.url),{type:'module'});
     const planetPositions=new Float32Array(planets.length*3),missionPositions=new Float32Array(missions.length*3);
-    const config={year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang};
+    const config={paused,year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang};
     const filterMission=mission=>mission.year<=config.year&&(config.missionGroup==='all'||missionKinds.find(group=>group.id===config.missionGroup)?.kinds.includes(mission.kind))&&(!config.hideArtificial||!['satellite','constellation','station','capsule'].includes(mission.kind))&&(config.body==='all'||mission.target===config.body)&&config.kind!=='planets'&&config.nearby;
     const refresh=()=>{
       orbitGroup.scale.y=config.view==='side'?0:1;
@@ -131,7 +131,7 @@ export default function SolarScene({year,view,selected,missionGroup,kind,body,hi
     const pointerCancel=event=>{activePointers.delete(event.pointerId);down=null;};
     renderer.domElement.addEventListener('pointermove',pointerMove);renderer.domElement.addEventListener('pointerleave',pointerLeave);renderer.domElement.addEventListener('pointerdown',pointerDown);renderer.domElement.addEventListener('pointerup',pointerUp);renderer.domElement.addEventListener('pointercancel',pointerCancel);
     const resize=new ResizeObserver(()=>{if(!host.clientWidth||!host.clientHeight)return;camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight);});resize.observe(host);
-    const animate=()=>{if(!visible)return;frame=requestAnimationFrame(animate);controls.autoRotate=Boolean(config.autoOrbit);controls.autoRotateSpeed=.25;controls.update();
+    const animate=()=>{if(!visible)return;frame=requestAnimationFrame(animate);if(config.paused)return;controls.autoRotate=Boolean(config.autoOrbit);controls.autoRotateSpeed=.25;controls.update();
       if(tween){camera.position.lerp(tween.camera,.085);controls.target.lerp(tween.target,.085);if(camera.position.distanceTo(tween.camera)<.08&&controls.target.distanceTo(tween.target)<.08)tween=null;}
       starGroup.rotation.y=THREE.MathUtils.lerp(starGroup.rotation.y,mouseX*.12,.025);starGroup.rotation.x=THREE.MathUtils.lerp(starGroup.rotation.x,mouseY*.07,.025);starGroup.position.x=THREE.MathUtils.lerp(starGroup.position.x,mouseX*5,.025);starGroup.position.y=THREE.MathUtils.lerp(starGroup.position.y,mouseY*3,.025);dustGroup.rotation.y+=.00004;sun.rotation.y+=.00035;
       planetNodes.forEach(({sphere,moonNodes})=>{sphere.rotation.y+=.00045;moonNodes.forEach(moon=>{const angle=frame*.00025/(moon.index+1)+moon.index*1.7;moon.marker.position.set(Math.cos(angle)*moon.distance,Math.sin(angle*1.4)*moon.distance*.08,Math.sin(angle)*moon.distance)})});
@@ -150,6 +150,6 @@ export default function SolarScene({year,view,selected,missionGroup,kind,body,hi
     return()=>{alive=false;visible=false;cancelAnimationFrame(frame);window.clearInterval(liveTimer);resize.disconnect();document.removeEventListener('visibilitychange',visibility);worker.terminate();controls.dispose();renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointerleave',pointerLeave);renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointercancel',pointerCancel);const release=material=>{material.map?.dispose();material.dispose()};scene.traverse(object=>{object.geometry?.dispose();if(Array.isArray(object.material))object.material.forEach(release);else if(object.material)release(object.material)});renderer.dispose();host.replaceChildren();apiRef.current=null;};
   },[]);
 
-  useEffect(()=>{apiRef.current?.setData({year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang});},[year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang]);
+  useEffect(()=>{apiRef.current?.setData({paused,year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang});},[paused,year,view,selected,missionGroup,kind,body,hideOrbits,hideArtificial,hideNatural,nearby,autoOrbit,geoLabels,lang]);
   return <div className="solar-scene" ref={hostRef} aria-label="可旋转和缩放的三维太阳系场景" />;
 }

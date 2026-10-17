@@ -2,7 +2,7 @@
 
 由 [KK-Tiong_Pavelio](https://ichxjz.com) 制作的独立太阳系图谱核心。使用 React、Three.js 和 Web Worker 呈现可交互的天体、任务标记与时间轴，可在本地直接运行。[线上 STARS AND SEA 页面在线预览](https://ichxjz.com/KK-Tiong_Pavelio)
 
-仓库收录 9 个天体、18 条选录任务档案、任务搜索、镜头与图层控制，以及桌面和手机布局。轨道位置、标记大小和部分小天体路径用于视觉说明，不适合导航或科研计算。
+仓库收录 9 个天体、18 条选录任务档案、任务搜索、镜头与图层控制，以及桌面和手机布局。0.3.0 加入可独立运行的地球卫星增强视图。太阳系档案示意的轨道位置、标记大小和部分小天体路径用于视觉说明，不适合导航或科研计算。
 
 ## 最新线上界面 GIF / Latest deployed experience
 
@@ -26,7 +26,16 @@
 
 录制日期为 **2026-10-17**，使用最终网站构建及其已审核轨道快照；线上目录数量会随五小时同步更新。启动百分比表示场景与镜头可操作就绪；高清图库按实际下载／解码另行计数。100% 末帧来自真实浏览器合成器，卫星轨迹各有 241 个推算样点，不是实时遥测。录制尺寸、帧数及校验值见 [recordings.json](docs/demos/recordings.json)。
 
-**这些 GIF 展示[完整线上版本](https://ichxjz.com/KK-Tiong_Pavelio)，不表示本独立核心已经包含全部功能。** 本仓库仍为 9 个天体、18 条选录任务的原创核心；未加入线上第三方前端、GP 快照、私人后台、任务照片或音乐。GIF 使用额外的固定录制署名，网站地球特写本身仍按设置隐藏界面水印。
+**这些 GIF 展示[完整线上版本](https://ichxjz.com/KK-Tiong_Pavelio)，不表示本独立核心已经包含全部功能。** 本仓库保留 9 个天体、18 条选录任务，并新增原创地球增强入口；未加入线上第三方前端、GP 快照、私人后台、任务照片或音乐。GIF 使用额外的固定录制署名，网站地球特写本身仍按设置隐藏界面水印。
+
+## 0.3.0 最新源码 / Current source
+
+- 点击地球同时居中并打开档案；关闭档案仍保留地球，点击「太阳系总览」返回。增强模块和 GP 请求延迟到选中地球后加载。
+- 原创 `LensControls`、地理投影、分层地图瓦片缓存／取消／重试和触摸识别代码与本轮作品集版本同步，文件 SHA 见 [source-sync.json](docs/source-sync.json)。
+- 按当前 UTC 使用 satellite.js 的 SGP4 推算卫星；真实点选、多轨道叠加、241 点轨迹、指针吸附与呼吸、拖动、双击触屏缩放、向阳／晨昏／背光观察均可运行。关闭视图释放 Worker、WebGL 与监听器。
+- **不随仓库分发 GP 快照**。默认按需访问 CelesTrak；超时或提供方拒绝时，明确显示失败并允许导入自己有权使用的 GP JSON，不显示虚构的“实时卫星”。使用自有可跨域的数据源时可配置 `VITE_ORBIT_URL`。
+- 地图由 OpenStreetMap / Esri 提供，高倍瓦片受网络和提供方影响；保留已载入的父级覆盖，不将全球任意精度离线数据当作已包含。
+- `npm run verify` 执行单测与构建，`npm run test:browser` 使用已安装 Edge/Chrome 验证实际点选、轨迹、观察方向、移动触控和资源释放。浏览器测试的 180 条 GP 为明确标记的合成数值夹具，不能代替真实数据源验收。
 
 ## 0.2.0 更新 / Changes
 
@@ -46,7 +55,7 @@
 
 ## 本地运行 / Run locally
 
-需要 Node.js 20.19 或更新版本。
+需要 Node.js 20.19+、22.12+ 或更新主版本（推荐 24 LTS）。
 
 ```bash
 npm ci
@@ -66,3 +75,5 @@ npm run dev
 An independent, runnable Solar Atlas core by [KK-Tiong_Pavelio](https://github.com/ichxjz). It includes a React/Three.js scene, 18 curated mission records, search, camera and layer controls, and a timeline. Positions and marker sizes are illustrative. The deployed experience contains additional third-party code and assets that are not included here; see the scope and licensing notes above.
 
 Version 0.2.0 adds black-theme browser recordings, non-blocking texture loading with honest failure counts, and touch picking at pointer release. The scene becomes interactive after its first valid render and orbit Worker response; texture downloads continue in the background.
+
+Version 0.3.0 ports original Earth lens controls, geographic math, tile lifecycle and touch recognition into a runnable independent Earth view with a separate SGP4 worker. Public orbital data is requested only after focusing Earth; a failed provider request is disclosed and user-supplied GP JSON can be imported. No live snapshot or license-unclear compiled upstream code is distributed.

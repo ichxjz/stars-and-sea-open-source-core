@@ -6,4 +6,6 @@
 
 This package does not contain the deployed HUMAN ARTIFACTS / solar-system-atlas.pages.dev frontend bundle or Worker, its task images, its compiled CSS, the CelesTrak snapshot, or the album's audio files. Their rights are not granted by this repository's MIT license.
 
-The two `docs/demos/enhanced-*.gif` recordings show the author's online enhanced Earth module, rather than functionality distributed in this core. The Earth surface includes Solar System Scope imagery (CC BY 4.0, attribution above); orbital elements are sourced from [CelesTrak](https://celestrak.org/) and positions are propagated, not live telemetry. The recordings do not include downloadable GP datasets or third-party frontend source. They carry an author/scope caption added for the recording.
+The eight `docs/demos/online-*.gif` recordings show the final full online site. The Earth surface includes Solar System Scope imagery (CC BY 4.0); orbital elements are from CelesTrak and positions are propagated, not telemetry. They carry a fixed author/scope caption and do not distribute GP datasets or upstream source.
+
+The independent Earth view uses satellite.js 6.0.2 (MIT, installed through npm). No compiled third-party atlas worker is copied. Its GP provider is requested at runtime, subject to that provider's access terms and availability; OpenStreetMap and Esri raster tiles are also requested at runtime and are not bundled. The browser regression fixture is synthetic and labelled as such.

@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-17",
+  "scope": "Original reusable Earth controls, geographic math, tile lifecycle and touch recognizer; independent adapter and SGP4 worker. No upstream compiled frontend or GP snapshot.",
+  "files": [
+    {
+      "file": "src/solar/earth/math.js",
+      "sha256": "8aafd60f516dbfeb191c833a3a2a0aed503711e016f13a67e30baa6cbd170403"
+    },
+    {
+      "file": "src/solar/earth/lens-controls.js",
+      "sha256": "7cdcb43210bd97276d1e61d94f6a04b024d6d1cbb1fed0ea4ad628718c17e304"
+    },
+    {
+      "file": "src/solar/earth/surface-tiles.js",
+      "sha256": "6e48a6e3a7c0414e37b2e98f2fe3ff9749cd86015409e6faa2d7ff6b872b1dc2",
+      "portfolioSha256": "7738b64eed5e9f0fed817d78f0315d9a6abf1b67aa0fd5ca07565de9e5ea794c",
+      "normalization": "Trailing blank lines only"
+    },
+    {
+      "file": "src/solar/touch-tap.js",
+      "sha256": "f632916b861226a12bac138e95dfe9468f6ddb06cea78d7ed3f69d8a158817ec"
+    }
+  ]
+}
