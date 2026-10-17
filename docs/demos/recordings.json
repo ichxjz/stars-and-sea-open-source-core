@@ -1,0 +1,180 @@
+{
+  "release": "ichxjz-portfolio-20261017182802",
+  "base": "https://ichxjz.com/KK-Tiong_Pavelio",
+  "watermark": "KK-Tiong_Pavelio",
+  "source": "Actual latest website interface. Online enhancements are not shipped in this independent core.",
+  "clips": [
+    {
+      "name": "startup",
+      "gif": "docs/demos/online-startup.gif",
+      "width": 960,
+      "height": 600,
+      "frames": 265,
+      "progress": [
+        "000%",
+        "025%",
+        "098%",
+        "100%"
+      ],
+      "seconds": 4.422276973724365,
+      "bytes": 8249166,
+      "sha256": "4148771045b5e96736eb1c6c60f5370b4eb8691e3f9a7340d74814cf55a248e1",
+      "watermarkEveryCapturedFrame": true,
+      "source": "Actual browser compositor screencast, no progress or clock changes",
+      "capturedFrames": 265,
+      "encodedFrames": 96,
+      "distinctFrames": 96
+    },
+    {
+      "name": "overview",
+      "gif": "docs/demos/online-overview.gif",
+      "width": 960,
+      "height": 600,
+      "seconds": 5.014,
+      "frames": 58,
+      "distinctFrames": 54,
+      "bytes": 4289560,
+      "sha256": "a78fb0078f74d001d26bd6ce63b1b121b1866faa0fcc2d9bb82543884edf859b",
+      "progress": [],
+      "watermarkEveryCapturedFrame": true,
+      "evidence": {
+        "focus": null
+      },
+      "capturedFrames": 58,
+      "encodedFrames": 59
+    },
+    {
+      "name": "earth-zoom",
+      "gif": "docs/demos/online-earth-zoom.gif",
+      "width": 960,
+      "height": 600,
+      "seconds": 5.728,
+      "frames": 44,
+      "distinctFrames": 43,
+      "bytes": 4595981,
+      "sha256": "34858b05745b622b7efaadafea769c1a1836a9af1f5d917386cf2f25a9a6ab16",
+      "progress": [],
+      "watermarkEveryCapturedFrame": true,
+      "evidence": {
+        "before": 2.8920255681653138,
+        "after": 2.0040502361176515
+      },
+      "capturedFrames": 44,
+      "encodedFrames": 68
+    },
+    {
+      "name": "satellite-orbits",
+      "gif": "docs/demos/online-satellite-orbits.gif",
+      "width": 960,
+      "height": 600,
+      "seconds": 4.881,
+      "frames": 48,
+      "distinctFrames": 47,
+      "bytes": 2198296,
+      "sha256": "159c66fdd88c2d1cf74552dd2f632a5f620626884cc4c89e448efddac66d1377",
+      "progress": [],
+      "watermarkEveryCapturedFrame": true,
+      "evidence": {
+        "picks": [
+          53976,
+          59185,
+          63319
+        ],
+        "samples": [
+          241,
+          241,
+          241
+        ]
+      },
+      "capturedFrames": 48,
+      "encodedFrames": 57
+    },
+    {
+      "name": "left-drag",
+      "gif": "docs/demos/online-left-drag.gif",
+      "width": 960,
+      "height": 600,
+      "seconds": 5.399,
+      "frames": 54,
+      "distinctFrames": 53,
+      "bytes": 7135308,
+      "sha256": "3bb8257fb7fc15e94d21ddb9e5fd8aaf15d18291bf85ea41e7c931786cbab43e",
+      "progress": [],
+      "watermarkEveryCapturedFrame": true,
+      "evidence": {
+        "before": [
+          -2.538641896306726,
+          1.3805435224245934,
+          0.1149295085241039
+        ],
+        "after": [
+          -2.481696060062914,
+          1.4422840036711797,
+          -0.3532894070650116
+        ],
+        "button": "left"
+      },
+      "capturedFrames": 54,
+      "encodedFrames": 64
+    },
+    {
+      "name": "mars",
+      "gif": "docs/demos/online-mars.gif",
+      "width": 960,
+      "height": 600,
+      "seconds": 5.075,
+      "frames": 43,
+      "distinctFrames": 42,
+      "bytes": 2341912,
+      "sha256": "68050f9e6d254b064cd227b6944bbbeaa9db88e24d2b51667df33a37c2ad3fcc",
+      "progress": [],
+      "watermarkEveryCapturedFrame": true,
+      "evidence": {
+        "label": "火星",
+        "id": "mars"
+      },
+      "capturedFrames": 43,
+      "encodedFrames": 60
+    },
+    {
+      "name": "jupiter",
+      "gif": "docs/demos/online-jupiter.gif",
+      "width": 960,
+      "height": 600,
+      "seconds": 5.027,
+      "frames": 43,
+      "distinctFrames": 43,
+      "bytes": 2429820,
+      "sha256": "dd3d78c5c6dd56578c1a8a9ddd3386cc1bf4e93ccd4c0cbca7575c6f025c66a4",
+      "progress": [],
+      "watermarkEveryCapturedFrame": true,
+      "evidence": {
+        "label": "木星",
+        "id": "jupiter"
+      },
+      "capturedFrames": 43,
+      "encodedFrames": 60
+    },
+    {
+      "name": "saturn",
+      "gif": "docs/demos/online-saturn.gif",
+      "width": 960,
+      "height": 600,
+      "seconds": 5.011,
+      "frames": 38,
+      "distinctFrames": 37,
+      "bytes": 2200846,
+      "sha256": "109272d787bc337a3be7a7f38e24a0d447b1db1c55ffd08ae92aad944d3db522",
+      "progress": [],
+      "watermarkEveryCapturedFrame": true,
+      "evidence": {
+        "label": "土星",
+        "id": "saturn"
+      },
+      "capturedFrames": 38,
+      "encodedFrames": 59
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
